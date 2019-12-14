@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Recorder</title>
+</head>
+<body>
+<canvas id="canvas" width="600" height="300" border : style="border: 1px blue solid";></canvas>
+<br/>
+
+
+ <input type="button" id="start" value="Start recording">&nbsp;
+    <input type="button" id="stop" value="Stop recording">&nbsp;
+    <input type="button" id="play" value="Play">&nbsp;
+    <input type="button" id="save" value="Save recording">
+    <input type="button" id="retrieve" value="Retrieve saved recording">&nbsp;<br><br>
+    
+    Change color: <button style="width:80px;background-color:yellow;" onclick='linecolor="yellow";'>YELLOW</button>
+<button style="width:80px ;background-color:red;" onclick='linecolor="red";'>RED</button>
+<button style="width:80px ;background-color:blue;" onclick='linecolor="blue";'>BLUE</button>
+<button style="width:80px ;background-color:green;" onclick='linecolor="green";'>GREEN</button>
+<button style="width:80px ;background-color:white;" onclick='linecolor="white";'>WHITE</button>
+<button style="width:80px ;background-color:black;" onclick='linecolor="black";'>BLACK</button> <br><br>
+
+bush size: <button style="width: 80px;background-color: white;" onclick="linw=4;">4PX</button>
+<button style="width: 80px;background-color: white;" onclick="linw=8;">8PX</button>
+<button style="width: 80px;background-color: white;" onclick="linw=16;">16PX</button>
+<br><br>
+	<input type = "button"  value= "save pricture" onclick="copyimage();"></button>&nbsp;&nbsp;
+	<input type="button" id="clear" value="Clear screen">&nbsp;
+    <hr>
+	
+	<h2>Help</h2>
+    <p>Click "Start recording "to record drawing and hold down the left mouse button to draw in the drawing area.After drawing, </p>
+	<p>select "stop recording" to finish drawing.Click "save recording" to save the drawing process. </p>
+	<p>Click "clear screen" to clear the drawing record.Select "retrieve saved recording" to retrieve the last drawing process. </p>
+	<p>Click on "COLOR" to select the different colors of the brush. if you want to save the picture, just choose "save picture".</p>
+		
+	</p>
+
+
+
+  
+<br/>
+<img src="" id="image_png" width="600px" height="300px">
+<br/>
+  
+<script type="text/javascript">
+
+
+
+
+ document.getElementById("clear").onclick=function () {
+        canvas.getContext("2d").clearRect(0, 0, document.getElementById("canvas").width, 
+		document.getElementById("canvas").height);
+    }
+  let canvas = document.getElementById('canvas');
+  let ctx = canvas.getContext("2d"); 
+  
+  let fillStyle = "white";
+  ctx.fillRect(0,0,600,300);
+  let onoff = false; 
+  let oldx = -10;
+  let oldy = -10;
+  
+  let linecolor = "white";
+  let linw = 4;
+  canvas.addEventListener("mousemove",draw,true); 
+  canvas.addEventListener("mousedown",down,false); 
+  canvas.addEventListener("mouseup",up,false); 
+  
+  function Recorder(utilityName, utilityDescription) {
+        Utility.call(this,utilityName, utilityDescription);
+        this.recording=false;
+        this.list=new DoubleIinkedList();
+    }
+    Recorder.prototype = Object.create(Utility.prototype);
+    Recorder.prototype.push=function (time,x,y,color) {
+        this.list.addTail([time,x,y,color]);
+    }
+    
+    
+    
+    Recorder.prototype.reset=function () {
+        this.list=new DoubleIinkedList();
+    }
+  
+  
+  
+  
+  function down(event){
+    onoff = true;
+    oldx = event.pageX - 10;
+    oldy = event.pageY - 10;
+  }
+  function up(){
+    onoff = false;
+  }
+  function draw(event){
+    if (onoff==true) {
+      let newx = event.pageX - 10;
+      let newy = event.pageY - 10
+      ctx.beginPath();
+      ctx.moveTo(oldx,oldy);
+      ctx.lineTo(newx,newy);
+      ctx.strokeStyle = linecolor;
+      ctx.lineWidth = linw;
+      ctx.lineCap = "round";
+      ctx.stroke();
+  
+      oldx = newx;
+      oldy = newy;
+    }
+  }
+  function copyimage(event)
+  {
+    let img_png_src = canvas.toDataURL("image/png"); 
+    document.getElementById("image_png").src = img_png_src;
+  }
+    
+  </script> 
+</body>
+</html>

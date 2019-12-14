@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>PhotoViewer</title>
+    <script src="linkedlist.js"></script>
+    <script src="utility.js"></script>
+
+</head>
+<body>
+<div style="background-color:#fff2cb;height:680px">
+<h1><u>Viewer</u></h1><br>
+<img id="image" src="InitialImage.jpg" alt="Image"><br>
+<hr>
+
+
+
+<form>
+<p>
+Photos' Folder: <input type="text" id="fold" value="umcp/" size = "46"required = "required"><br>
+</p>
+<p>
+Common Name: <input type="text" id="name" value="college" size = "23" required = "required"><br>
+</p>
+
+<p>
+Start Photo Number: <input type="text" value="1"  id="start" size ="6" required = "required"> &nbsp;&nbsp;
+End Photo Number: <input type="text" value="1"  id="end" size ="6"  required = "required"><br>
+</p>
+<p>
+<input type="button" id="slide" value="Slide Show">&nbsp;
+<input type="button" id="random" value="Random Slide Show">&nbsp;
+<input type="button" id="previ" value="Previous Slide">&nbsp;
+<input type="button" id="next" value="Next Slide"><br>
+</p>
+<p>
+<input type="button" id="auto" value="Auto Slide Show">&nbsp;
+<input type="button" id="autoRan" value="Auto Random Slide Show">&nbsp;
+<input type="button" id="stop" value="Stop Auto Show"><br>
+</p>
+<p>
+<input type="reset" id="rest" value="Reset">
+</p>
+</form>
+<script type="text/javascript">
+    function PhotoViewer(utilityName, utilityDescription) {
+        Utility.call(this,utilityName, utilityDescription);
+    }
+    PhotoViewer.prototype = Object.create(Utility.prototype);
+    PhotoViewer.prototype.constructor=PhotoViewer;
+	PhotoViewer.prototype.addElement = function() {}
+	PhotoViewer.prototype.addFront = function() {}
+	PhotoViewer.prototype.addTail = function() {}
+	PhotoViewer.prototype.search = function() {}
+	PhotoViewer.prototype.isEmpty = function() {}
+
+	
+	
+	    PhotoViewer.prototype.randomize=function () {
+        let fold=document.getElementById("fold").value;
+        let name=document.getElementById("name").value;
+        let start=document.getElementById("start").value;
+        let end=document.getElementById("end").value;
+        let list=new List(function (a,b) {return Math.random()>.5 ? -2 : 2;});
+        if (Number(end)<Number(start)||isNaN(start)||isNaN(end))
+            alert("Invalid Range");
+        else{
+            for(let i=Number(start);i<=Number(end);i++){
+                list.addElement(fold+name+i+".jpg");
+            }
+        }
+        return list;
+    }
+	
+	
+	
+	
+	
+    PhotoViewer.prototype.getArrayPhotosNames=function () {
+        let fold=document.getElementById("fold").value;
+        let name=document.getElementById("name").value;
+        let start=document.getElementById("start").value;
+        let end=document.getElementById("end").value;
+        let list=new List(function (a,b) {return a-b;});
+        if (Number(end)<Number(start)||isNaN(start)||isNaN(end))
+            alert("Invalid Range");
+        else{
+            for(let i=Number(start);i<=Number(end);i++){
+                list.addTail(fold+name+i+".jpg");
+            }
+        }
+        return list;
+    }
+
+
+    let tempviewer=new PhotoViewer("PhotoViewer","PhotoViewer");
+    let list=new List(function (x,y) {return x-y;});
+    let position=0;
+    let interval;
+	
+	   function previ() {
+        if(list.size()==0){
+            alert("Please set image first");
+            return;
+        }
+        position--;
+        if (position <0) {
+            position = list.size()-1;
+        }
+        document.getElementById("image").setAttribute("src", list.search(position));
+    }
+    function next() {
+        if(list.size()==0){
+            alert("Please set image first");
+            return;
+        }
+        position++;
+        if (position > list.size()- 1) {
+            position = 0;
+        }
+        document.getElementById("image").setAttribute("src", list.search(position));
+    }
+ 
+    document.getElementById("slide").onclick=function() {
+        list=tempviewer.getArrayPhotosNames();
+        document.getElementById("image").setAttribute("src", list.search(0));
+        position=0;
+    };
+    document.getElementById("random").onclick=function () {
+        list=tempviewer.randomize();
+        document.getElementById("image").setAttribute("src", list.search(0));
+        position=0;
+    }
+    document.getElementById("auto").onclick=function () {
+        if(interval){
+            alert("Stop current slide show first");
+        }
+        else {
+            list=tempviewer.getArrayPhotosNames();
+            if (list.size()!=0){
+                interval = setInterval("next()", 500);
+            }
+        }
+    }
+    document.getElementById("autoRan").onclick=function () {
+        if(interval){
+            alert("Stop current slide show first");
+        }
+        else {
+            list=tempviewer.randomize();
+            if (list.size()!=0){
+                interval = setInterval("next()", 500);
+            }
+        }
+    }
+    document.getElementById("stop").onclick=function () {
+        clearInterval(interval);
+        interval = null;
+    }
+    document.getElementById("next").onclick=next;
+    document.getElementById("image").onclick=next;
+    document.getElementById("previ").onclick=previ;
+</script>
+</body>
+</html>
